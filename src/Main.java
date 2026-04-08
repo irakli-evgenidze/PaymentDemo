@@ -17,5 +17,15 @@ public class Main {
         for (Payment payment : paymentService.getPaymentHistory()) {
             System.out.println(payment);
         }
+
+        String searchId = paymentService.getPaymentHistory().get(0).getId();
+
+        Payment found = paymentService.findPaymentById(searchId);
+
+        if (found != null) {
+            System.out.println("Found payment:" + found);
+        } else {
+            System.out.println("Payment not found");
+        }
     }
 }

@@ -26,4 +26,13 @@ public class PaymentService {
     public List<Payment> getPaymentHistory() {
         return paymentHistory;
     }
+
+    public Payment findPaymentById(String id) {
+        for (Payment payment : paymentHistory) {
+            if (payment.getId().equals(id)) {
+
+            }
+        }
+        return null;
+    }
 }
