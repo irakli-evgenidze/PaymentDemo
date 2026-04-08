@@ -1,6 +1,37 @@
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         PaymentService paymentService = new PaymentService();
+
+        try {
+            System.out.println("Enter payment amount: ");
+            double amount = scanner.nextDouble();
+
+
+            System.out.println("Choose payment method: 1 = CARD, 2 = CASH, 3 = TRANSFER");
+            int methodInput = scanner.nextInt();
+
+            PaymentMethod method;
+
+            if (methodInput == 1) {
+                method = PaymentMethod.CARD;
+            } else if (methodInput == 2) {
+                method = PaymentMethod.CASH;
+            }else {
+                method = PaymentMethod.TRANSFER;
+            }
+            Payment payment = paymentService.createPayment(amount, method);
+            paymentService.proccessPayment(payment);
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+
+        }
+        scanner.close();
+
+
     try {
         Payment payment1 = paymentService.createPayment(250.50, PaymentMethod.CARD);
         paymentService.proccessPayment(payment1);
@@ -38,3 +69,4 @@ public class Main {
         }
     }
 }
+
