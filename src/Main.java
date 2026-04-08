@@ -27,5 +27,14 @@ public class Main {
         } else {
             System.out.println("Payment not found");
         }
+
+        Payment firstPayment = paymentService.getPaymentHistory().get(0);
+
+        try {
+            paymentService.refundPayment(firstPayment);
+            System.out.println("After refaund" + firstPayment);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Refund error" + e.getMessage());
+        }
     }
 }

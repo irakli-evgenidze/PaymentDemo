@@ -35,4 +35,12 @@ public class PaymentService {
         }
         return null;
     }
+
+    public void refundPayment(Payment payment) {
+        if (payment.getStatus() == PaymentStatus.SUCCESS) {
+            payment.setStatus(PaymentStatus.REFUNDED);
+        } else {
+            throw new IllegalArgumentException("Only succesful payment can be refunded");
+        }
+    }
 }
