@@ -53,7 +53,7 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.REFUNDED);
             savePaymentsTofile();
         } else {
-            throw new IllegalArgumentException("Only succesful payment can be refunded");
+            throw new IllegalArgumentException(" Only successful payment can be refunded");
         }
     }
 
