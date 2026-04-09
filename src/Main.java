@@ -23,7 +23,7 @@ public class Main {
                 method = PaymentMethod.TRANSFER;
             }
             Payment payment = paymentService.createPayment(amount, method);
-            paymentService.proccessPayment(payment);
+            paymentService.processPayment(payment);
 
             } catch (IllegalArgumentException e) {
                 System.out.println("Error: " + e.getMessage());
@@ -34,13 +34,13 @@ public class Main {
 
     try {
         Payment payment1 = paymentService.createPayment(250.50, PaymentMethod.CARD);
-        paymentService.proccessPayment(payment1);
+        paymentService.processPayment(payment1);
 
         Payment payment2 = paymentService.createPayment(1500, PaymentMethod.TRANSFER);
-        paymentService.proccessPayment(payment2);
+        paymentService.processPayment(payment2);
 
         Payment payment3 = paymentService.createPayment(-10, PaymentMethod.CASH);
-        paymentService.proccessPayment(payment3);
+        paymentService.processPayment(payment3);
     }catch (IllegalArgumentException e) {
         System.out.println("Error:" + e.getMessage());
     }

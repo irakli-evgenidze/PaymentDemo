@@ -11,6 +11,13 @@ public class Payment {
         this.status = PaymentStatus.PENDING;
     }
 
+    public Payment(String id, double amount, PaymentMethod method, PaymentStatus status) {
+        this.id = id;
+        this.amount = amount;
+        this.method = method;
+        this.status =status;
+    }
+
 
     public String getId() {
         return id;
