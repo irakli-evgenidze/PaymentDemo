@@ -6,7 +6,7 @@ public class Main {
         PaymentService paymentService = new PaymentService();
 
         while (true){
-            System.out.println("/n=== Payment System ===");
+            System.out.println("\n=== Payment System ===");
             System.out.println("1. Create Payment");
             System.out.println("2. View All Payments");
             System.out.println("3. Find Payment");
