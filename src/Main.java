@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -9,7 +10,6 @@ public class Main {
         String currentToken = null;
 
         while (true) {
-
 
             if (currentToken == null || !authService.isSessionValid(currentToken)) {
                 if (currentToken != null) {
@@ -24,7 +24,7 @@ public class Main {
                 System.out.print("Choose option: ");
 
                 int authChoice = scanner.nextInt();
-                scanner.nextLine(); // clear buffer
+                scanner.nextLine();
 
                 if (authChoice == 1) {
                     System.out.print("Enter email: ");
@@ -38,7 +38,7 @@ public class Main {
                     if (registered) {
                         System.out.println("Registered successfully.");
                     } else {
-                        System.out.println("User already exists.");
+                        System.out.println("Registration failed. User may already exist or input is invalid.");
                     }
 
                 } else if (authChoice == 2) {
@@ -69,11 +69,14 @@ public class Main {
             }
 
             try {
+                String currentUserEmail = authService.getUserEmailByToken(currentToken);
+
                 System.out.println("\n=== Payment System ===");
+                System.out.println("Logged in as: " + currentUserEmail);
                 System.out.println("1. Create Payment");
-                System.out.println("2. View All Payments");
-                System.out.println("3. Find Payment");
-                System.out.println("4. Refund Payment");
+                System.out.println("2. View My Payments");
+                System.out.println("3. Find My Payment");
+                System.out.println("4. Refund My Payment");
                 System.out.println("5. Logout");
                 System.out.println("6. Exit");
                 System.out.print("Choose option: ");
@@ -92,43 +95,52 @@ public class Main {
                         method = PaymentMethod.CARD;
                     } else if (methodInput == 2) {
                         method = PaymentMethod.CASH;
-                    } else {
+                    } else if (methodInput == 3) {
                         method = PaymentMethod.TRANSFER;
+                    } else {
+                        System.out.println("Invalid payment method.");
+                        continue;
                     }
 
-                    Payment payment = paymentService.createPayment(amount, method);
+                    Payment payment = paymentService.createPayment(amount, method, currentUserEmail);
                     paymentService.processPayment(payment);
 
                     System.out.println("Created: " + payment);
 
                 } else if (choice == 2) {
-                    for (Payment p : paymentService.getPaymentHistory()) {
-                        System.out.println(p);
+                    List<Payment> payments = paymentService.getPaymentsByUser(currentUserEmail);
+
+                    if (payments.isEmpty()) {
+                        System.out.println("No payments found.");
+                    } else {
+                        for (Payment p : payments) {
+                            System.out.println(p);
+                        }
                     }
 
                 } else if (choice == 3) {
                     System.out.print("Enter payment ID: ");
                     String id = scanner.next();
 
-                    Payment found = paymentService.findPaymentById(id);
+                    Payment found = paymentService.findPaymentByIdForUser(id, currentUserEmail);
 
                     if (found != null) {
                         System.out.println(found);
                     } else {
-                        System.out.println("Not found");
+                        System.out.println("Payment not found.");
                     }
 
                 } else if (choice == 4) {
                     System.out.print("Enter payment ID to refund: ");
                     String id = scanner.next();
 
-                    Payment payment = paymentService.findPaymentById(id);
+                    Payment payment = paymentService.findPaymentByIdForUser(id, currentUserEmail);
 
                     if (payment != null) {
                         paymentService.refundPayment(payment);
                         System.out.println("Refunded: " + payment);
                     } else {
-                        System.out.println("Payment not found");
+                        System.out.println("Payment not found.");
                     }
 
                 } else if (choice == 5) {
@@ -153,4 +165,3 @@ public class Main {
         scanner.close();
     }
 }
-
