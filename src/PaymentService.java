@@ -12,37 +12,55 @@ public class PaymentService {
         loadPaymentsFromFile();
     }
 
-    public Payment createPayment(double amount, PaymentMethod method) {
+    public Payment createPayment(double amount, PaymentMethod method, String userEmail) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
-
         }
 
+        Payment payment = new Payment(
+                UUID.randomUUID().toString(),
+                amount,
+                method,
+                PaymentStatus.PENDING,
+                userEmail
+        );
 
-        Payment payment = new Payment(UUID.randomUUID().toString(), amount, method);
         paymentHistory.add(payment);
-
-        savePaymentsTofile();
+        savePaymentsToFile();
 
         return payment;
     }
+
     public void processPayment(Payment payment) {
         if (payment.getAmount() > 1000) {
             payment.setStatus(PaymentStatus.FAILED);
-        }else {
+        } else {
             payment.setStatus(PaymentStatus.SUCCESS);
         }
 
-        savePaymentsTofile();
+        savePaymentsToFile();
     }
+
     public List<Payment> getPaymentHistory() {
         return paymentHistory;
     }
 
-    public Payment findPaymentById(String id) {
-        for (Payment payment : paymentHistory) {
-            if (payment.getId().equals(id)) {
+    public List<Payment> getPaymentsByUser(String userEmail) {
+        List<Payment> userPayments = new ArrayList<>();
 
+        for (Payment payment : paymentHistory) {
+            if (payment.getUserEmail().equals(userEmail)) {
+                userPayments.add(payment);
+            }
+        }
+
+        return userPayments;
+    }
+
+    public Payment findPaymentByIdForUser(String id, String userEmail) {
+        for (Payment payment : paymentHistory) {
+            if (payment.getId().equals(id) && payment.getUserEmail().equals(userEmail)) {
+                return payment;
             }
         }
         return null;
@@ -51,9 +69,9 @@ public class PaymentService {
     public void refundPayment(Payment payment) {
         if (payment.getStatus() == PaymentStatus.SUCCESS) {
             payment.setStatus(PaymentStatus.REFUNDED);
-            savePaymentsTofile();
+            savePaymentsToFile();
         } else {
-            throw new IllegalArgumentException("Only succesful payment can be refunded");
+            throw new IllegalArgumentException("Only successful payments can be refunded");
         }
     }
 
@@ -70,12 +88,17 @@ public class PaymentService {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
 
+                if (parts.length < 5) {
+                    continue;
+                }
+
                 String id = parts[0];
                 double amount = Double.parseDouble(parts[1]);
                 PaymentMethod method = PaymentMethod.valueOf(parts[2]);
                 PaymentStatus status = PaymentStatus.valueOf(parts[3]);
+                String userEmail = parts[4];
 
-                Payment payment =  new Payment(id, amount, method, status);
+                Payment payment = new Payment(id, amount, method, status, userEmail);
                 paymentHistory.add(payment);
             }
         } catch (IOException e) {
@@ -83,13 +106,15 @@ public class PaymentService {
         }
     }
 
-    private void  savePaymentsTofile() {
+    private void savePaymentsToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Payment payment : paymentHistory) {
                 String line = payment.getId() + "," +
                         payment.getAmount() + "," +
                         payment.getMethod() + "," +
-                        payment.getStatus();
+                        payment.getStatus() + "," +
+                        payment.getUserEmail();
+
                 writer.write(line);
                 writer.newLine();
             }

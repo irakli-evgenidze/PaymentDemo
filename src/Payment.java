@@ -3,21 +3,15 @@ public class Payment {
     private double amount;
     private PaymentMethod method;
     private PaymentStatus status;
+    private String userEmail;
 
-    public Payment(String id, double amount, PaymentMethod method) {
+    public Payment(String id, double amount, PaymentMethod method, PaymentStatus status, String userEmail) {
         this.id = id;
         this.amount = amount;
         this.method = method;
-        this.status = PaymentStatus.PENDING;
+        this.status = status;
+        this.userEmail = userEmail;
     }
-
-    public Payment(String id, double amount, PaymentMethod method, PaymentStatus status) {
-        this.id = id;
-        this.amount = amount;
-        this.method = method;
-        this.status =status;
-    }
-
 
     public String getId() {
         return id;
@@ -35,15 +29,22 @@ public class Payment {
         return status;
     }
 
+    public String getUserEmail() {
+        return userEmail;
+    }
+
     public void setStatus(PaymentStatus status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "payment{" + "id=' " +id +
-                '\'' + ", ammount=" +
-                amount + ", method=" + method +
-                ", status=" + status + '}';
+        return "Payment{" +
+                "id='" + id + '\'' +
+                ", amount=" + amount +
+                ", method=" + method +
+                ", status=" + status +
+                ", userEmail='" + userEmail + '\'' +
+                '}';
     }
 }
